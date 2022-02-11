@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -64,10 +65,11 @@ public class Board {
      * @return Cell that is located at the given coordinate
      */
     public Cell getCell(Coordinate coordinate) { // TODO
-        return null;
+    	Cell cell = new Cell(coordinate);
+        return cell;
     }
 
-    /**
+	/**
      * @return the game winner Piece.Type (Muskeeteer or Guard) if there is one otherwise null
      */
     public Piece.Type getWinner() {
@@ -79,6 +81,7 @@ public class Board {
      * @return List of cells
      */
     public List<Cell> getMusketeerCells() { // TODO
+    	//List<Cell> list = new ArrayList<>();
         return List.of();
     }
 
