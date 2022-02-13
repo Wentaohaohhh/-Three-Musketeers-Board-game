@@ -13,6 +13,7 @@ public class HumanAgent extends Agent {
      */
     @Override
     public Move getMove() { // TODO
+    	
         return null;
     }
 }

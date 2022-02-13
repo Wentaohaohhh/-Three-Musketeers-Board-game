@@ -98,8 +98,8 @@ public class Board {
      */
     public List<Cell> getGuardCells() { // TODO
     	List<Cell> list = new ArrayList<>();
-   	 for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board.length; col++) {
+   	 for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
                 if(board[row][col].hasPiece() && board[row][col].getPiece().getType() == Piece.Type.GUARD) {
                	 list.add(board[row][col]);
                 }
@@ -188,26 +188,43 @@ public class Board {
      */
     public List<Cell> getPossibleDestinations(Cell fromCell) { // TODO
     	List<Cell> list = new ArrayList<>();
-    	Cell cell = null;
-    	cell.getCoordinate().col = fromCell.getCoordinate().col;
-    	cell.getCoordinate().row = fromCell.getCoordinate().row + 1;
-    	if(!onBoard(cell))
-    	cell.getCoordinate().col = fromCell.getCoordinate().col;
-    	cell.getCoordinate().row = fromCell.getCoordinate().row - 1;
-    	cell.getCoordinate().col = fromCell.getCoordinate().col + 1;
-    	cell.getCoordinate().row = fromCell.getCoordinate().row;
-    	cell.getCoordinate().col = fromCell.getCoordinate().col - 1;
-    	cell.getCoordinate().row = fromCell.getCoordinate().row;
-    	
-        return null;
+    	Cell tocell = null;
+    	Coordinate toc = new Coordinate(fromCell.getCoordinate().col, fromCell.getCoordinate().row + 1);
+    	tocell = new Cell(toc);
+    	if(fromCell.getPiece().canMoveOnto(tocell)) {
+    		list.add(tocell);
+    	}
+    	toc = new Coordinate(fromCell.getCoordinate().col, fromCell.getCoordinate().row - 1);
+    	tocell = new Cell(toc);
+    	if(fromCell.getPiece().canMoveOnto(tocell)) {
+    		list.add(tocell);
+    	}
+    	toc = new Coordinate(fromCell.getCoordinate().col + 1, fromCell.getCoordinate().row);
+    	tocell = new Cell(toc);
+    	if(fromCell.getPiece().canMoveOnto(tocell)) {
+    		list.add(tocell);
+    	}
+    	toc = new Coordinate(fromCell.getCoordinate().col - 1, fromCell.getCoordinate().row);
+    	tocell = new Cell(toc);
+    	if(fromCell.getPiece().canMoveOnto(tocell)) {
+    		list.add(tocell);
+    	}
+        return list;
     }
 
-    /**
+	/**
      * Get all the possible moves that can be made this turn.
      * @return List of moves that can be made this turn
      */
     public List<Move> getPossibleMoves() { // TODO
-        return List.of();
+    	List<Move> list = new ArrayList<>();
+    	for(Cell fromcell: getPossibleCells()) {
+    		for(Cell tocell: getPossibleDestinations(fromcell)) {
+    			list.add(new Move(fromcell, tocell));
+    		}
+    	}
+    	
+        return list;
     }
 
     /**
@@ -215,6 +232,17 @@ public class Board {
      * @return True, if the game is over, false otherwise.
      */
     public boolean isGameOver() { // TODO
+    	Coordinate c1 = getMusketeerCells().get(0).getCoordinate();
+    	Coordinate c2 = getMusketeerCells().get(1).getCoordinate();
+    	Coordinate c3 = getMusketeerCells().get(2).getCoordinate();
+    	if((c1.col == c2.col && c1.col == c3.col) || (c1.row == c2.row && c1.row == c3.row)) {
+    		winner = Piece.Type.GUARD;
+    		return true;
+    	}
+    	if(getPossibleCells().isEmpty()) {
+    		winner = Piece.Type.MUSKETEER;
+    		return true;
+    	}
         return false;
     }
 
