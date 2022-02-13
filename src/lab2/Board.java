@@ -65,7 +65,7 @@ public class Board {
      * @return Cell that is located at the given coordinate
      */
     public Cell getCell(Coordinate coordinate) { // TODO
-    	Cell cell = new Cell(coordinate);
+    	Cell cell = this.board[coordinate.row][coordinate.col];
         return cell;
     }
 
@@ -81,8 +81,15 @@ public class Board {
      * @return List of cells
      */
     public List<Cell> getMusketeerCells() { // TODO
-    	//List<Cell> list = new ArrayList<>();
-        return List.of();
+    	List<Cell> list = new ArrayList<>();
+    	 for (int row = 0; row < board.length; row++) {
+             for (int col = 0; col < board.length; col++) {
+                 if(board[row][col].hasPiece() && board[row][col].getPiece().getType() == Piece.Type.MUSKETEER) {
+                	 list.add(board[row][col]);
+                 }
+             }
+         }
+        return list;
     }
 
     /**
@@ -90,7 +97,15 @@ public class Board {
      * @return List of cells
      */
     public List<Cell> getGuardCells() { // TODO
-        return List.of();
+    	List<Cell> list = new ArrayList<>();
+   	 for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board.length; col++) {
+                if(board[row][col].hasPiece() && board[row][col].getPiece().getType() == Piece.Type.GUARD) {
+               	 list.add(board[row][col]);
+                }
+            }
+        }
+       return list;
     }
 
     /**
@@ -98,6 +113,15 @@ public class Board {
      * @param move a valid move
      */
     public void move(Move move) { // TODO
+    	Piece p = move.fromCell.getPiece();
+    	move.toCell.setPiece(p);
+    	move.fromCell.removePiece();
+    	if(this.turn == Piece.Type.MUSKETEER) {
+    		this.turn = Piece.Type.GUARD;
+    	}else {
+    		this.turn = Piece.Type.MUSKETEER;
+    	}
+    	//turn == Piece.Type.MUSKETEER ? this.turn = Piece.Type.GUARD: this.turn = Piece.Type.MUSKETEER;
     }
 
     /**
@@ -106,7 +130,15 @@ public class Board {
      *             from and to cell fields. Changes turns at the end of the method.
      */
     public void undoMove(Move move) { // TODO
-
+    	Cell fcell = move.fromCell;
+    	Cell tcell = move.toCell;
+    	fcell.setPiece(tcell.getPiece());
+    	tcell.setPiece(fcell.getPiece());
+    	if(this.turn == Piece.Type.MUSKETEER) {
+    		this.turn = Piece.Type.GUARD;
+    	}else {
+    		this.turn = Piece.Type.MUSKETEER;
+    	}
     }
 
     /**
@@ -117,7 +149,14 @@ public class Board {
      * @return     True, if the move is valid, false otherwise
      */
     public Boolean isValidMove(Move move) { // TODO
-        return true;
+    	Coordinate fcoo = move.fromCell.getCoordinate();
+    	Coordinate tcoo = move.toCell.getCoordinate();
+    	if(!(Math.abs(fcoo.col - tcoo.col) + Math.abs(fcoo.row - tcoo.row) == 1)) {
+    		return false;
+    	}else {
+    		return move.fromCell.getPiece().canMoveOnto(move.toCell);
+    	}
+        
     }
 
     /**
@@ -125,7 +164,21 @@ public class Board {
      * @return      Cells that can be moved from the given cells
      */
     public List<Cell> getPossibleCells() { // TODO
-        return List.of();
+    	List<Cell> list = new ArrayList<>();
+    	if(this.turn == Piece.Type.GUARD) {
+    		for(Cell cell: getGuardCells()) {
+    			if(!getPossibleDestinations(cell).isEmpty()) {
+    				list.add(cell);
+    			}
+    		}
+    	}else {
+    		for(Cell cell: getMusketeerCells()) {
+    			if(!getPossibleDestinations(cell).isEmpty()) {
+    				list.add(cell);
+    			}
+    		}
+    	}
+        return list;
     }
 
     /**
@@ -134,6 +187,18 @@ public class Board {
      * @return List of cells that are possible to get to
      */
     public List<Cell> getPossibleDestinations(Cell fromCell) { // TODO
+    	List<Cell> list = new ArrayList<>();
+    	Cell cell = null;
+    	cell.getCoordinate().col = fromCell.getCoordinate().col;
+    	cell.getCoordinate().row = fromCell.getCoordinate().row + 1;
+    	if(!onBoard(cell))
+    	cell.getCoordinate().col = fromCell.getCoordinate().col;
+    	cell.getCoordinate().row = fromCell.getCoordinate().row - 1;
+    	cell.getCoordinate().col = fromCell.getCoordinate().col + 1;
+    	cell.getCoordinate().row = fromCell.getCoordinate().row;
+    	cell.getCoordinate().col = fromCell.getCoordinate().col - 1;
+    	cell.getCoordinate().row = fromCell.getCoordinate().row;
+    	
         return null;
     }
 
