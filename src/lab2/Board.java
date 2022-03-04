@@ -66,6 +66,7 @@ public class Board {
      */
     public Cell getCell(Coordinate coordinate) { // TODO
     	Cell cell = this.board[coordinate.row][coordinate.col];
+    	cell.setPiece(this.board[coordinate.row][coordinate.col].getPiece());
         return cell;
     }
 
@@ -130,15 +131,16 @@ public class Board {
      *             from and to cell fields. Changes turns at the end of the method.
      */
     public void undoMove(Move move) { // TODO
-    	Cell fcell = move.fromCell;
-    	Cell tcell = move.toCell;
-    	fcell.setPiece(tcell.getPiece());
-    	tcell.setPiece(fcell.getPiece());
+    	Cell fcell = getCell(move.fromCell.getCoordinate());
+    	Cell tcell = getCell(move.toCell.getCoordinate());
+    	fcell.setPiece(move.fromCell.getPiece());
+    	tcell.setPiece(move.toCell.getPiece());
     	if(this.turn == Piece.Type.MUSKETEER) {
     		this.turn = Piece.Type.GUARD;
     	}else {
     		this.turn = Piece.Type.MUSKETEER;
     	}
+    	System.out.print("Undid the previous move.");
     }
 
     /**
@@ -189,26 +191,37 @@ public class Board {
     public List<Cell> getPossibleDestinations(Cell fromCell) { // TODO
     	List<Cell> list = new ArrayList<>();
     	Cell tocell = null;
-    	Coordinate toc = new Coordinate(fromCell.getCoordinate().col, fromCell.getCoordinate().row + 1);
-    	tocell = new Cell(toc);
-    	if(fromCell.getPiece().canMoveOnto(tocell)) {
-    		list.add(tocell);
+    	Coordinate toc = new Coordinate(fromCell.getCoordinate().row, fromCell.getCoordinate().col + 1);
+    	
+    	if(toc.col<5 && toc.col>=0 &&toc.row<5 && toc.row>=0) {
+    		tocell = getCell(toc);
+    		
+    	    if(fromCell.hasPiece() && fromCell.getPiece().canMoveOnto(tocell)) {
+    		    list.add(tocell);
+    	    }
     	}
-    	toc = new Coordinate(fromCell.getCoordinate().col, fromCell.getCoordinate().row - 1);
-    	tocell = new Cell(toc);
-    	if(fromCell.getPiece().canMoveOnto(tocell)) {
-    		list.add(tocell);
+    	toc = new Coordinate(fromCell.getCoordinate().row, fromCell.getCoordinate().col - 1);
+    	if(toc.col<5 && toc.col>=0 &&toc.row<5 && toc.row>=0) {
+    		tocell = getCell(toc);
+    	    if(fromCell.hasPiece() && fromCell.getPiece().canMoveOnto(tocell)) {
+    		    list.add(tocell);
+    	    }
     	}
-    	toc = new Coordinate(fromCell.getCoordinate().col + 1, fromCell.getCoordinate().row);
-    	tocell = new Cell(toc);
-    	if(fromCell.getPiece().canMoveOnto(tocell)) {
-    		list.add(tocell);
+    	toc = new Coordinate(fromCell.getCoordinate().row + 1, fromCell.getCoordinate().col);
+    	if(toc.col<5 && toc.col>=0 &&toc.row<5 && toc.row>=0) {
+    		tocell = getCell(toc);
+    	    if(fromCell.hasPiece() && fromCell.getPiece().canMoveOnto(tocell)) {
+    		    list.add(tocell);
+    	    }
     	}
-    	toc = new Coordinate(fromCell.getCoordinate().col - 1, fromCell.getCoordinate().row);
-    	tocell = new Cell(toc);
-    	if(fromCell.getPiece().canMoveOnto(tocell)) {
-    		list.add(tocell);
+    	toc = new Coordinate(fromCell.getCoordinate().row - 1, fromCell.getCoordinate().col);
+    	if(toc.col<5 && toc.col>=0 &&toc.row<5 && toc.row>=0) {
+    		tocell = getCell(toc);
+    	    if(fromCell.hasPiece() && fromCell.getPiece().canMoveOnto(tocell)) {
+    		    list.add(tocell);
+    	    }
     	}
+    	
         return list;
     }
 
@@ -241,6 +254,7 @@ public class Board {
     	}
     	if(getPossibleCells().isEmpty()) {
     		winner = Piece.Type.MUSKETEER;
+    		//System.out.printf(null, board)
     		return true;
     	}
         return false;
